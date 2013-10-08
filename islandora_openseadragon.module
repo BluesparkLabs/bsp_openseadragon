@@ -54,6 +54,35 @@ function islandora_openseadragon_islandora_viewer_info() {
 }
 
 /**
+* Implements hook_field_formatter_info().
+*/
+function islandora_openseadragon_field_formatter_info() {
+  return array(
+    'textfield_openseadragon' => array(
+      'label' => t('OpenSeadragon text field URI viewer'),
+      'field types' => array('text'),
+    ),
+  );
+}
+
+/**
+* Implements hook_field_formatter_view().
+*/
+function islandora_openseadragon_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  switch ($display['type']) {
+    case 'textfield_openseadragon':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = array(
+          '#markup' => '<div id="islandora-openseadragon" class="islandora-openseadragon"></div>',
+        );
+      }
+    break;
+  }
+  return $element;
+}
+
+/**
  * Callback function for the viewer.
  *
  * @param array $params
