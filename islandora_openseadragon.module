@@ -72,12 +72,30 @@ function islandora_openseadragon_field_formatter_view($entity_type, $entity, $fi
   $element = array();
   switch ($display['type']) {
     case 'textfield_openseadragon':
-      foreach ($items as $delta => $item) {
-        $element[$delta] = array(
+      if (!empty($items[0])) {
+        $library_path = libraries_get_path('openseadragon');
+        $module_path = drupal_get_path('module', 'islandora_openseadragon');
+        $settings = islandora_openseadragon_add_settings();
+        $params = array(
+          'islandoraOpenSeadragon' => array(
+            'resourceUri' => $items[0]['value'],
+            'tileSize' => (int) variable_get('islandora_openseadragon_tile_size', '256'),
+            'tileOverlap' => (int) variable_get('islandora_openseadragon_tile_overlap', '0'),
+            'settings' => $settings),
+        );
+
+        drupal_add_js($params, 'setting');
+        drupal_add_js("$module_path/js/islandora_openseadragon.js");
+        drupal_add_js("$library_path/openseadragon.js");
+        drupal_add_js("$module_path/js/djtilesource.js");
+        drupal_add_css("$module_path/css/islandora_openseadragon.theme.css");
+
+        $element[0] = array(
           '#markup' => '<div id="islandora-openseadragon" class="islandora-openseadragon"></div>',
         );
       }
-    break;
+
+      break;
   }
   return $element;
 }
@@ -105,49 +123,8 @@ function islandora_openseadragon_callback($params = NULL, $fedora_object = NULL)
  * Implements hook_preprocess().
  */
 function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$variables) {
-  // Variable fedora_object included in results, but not used.
-  $library_path = libraries_get_path('openseadragon');
-  $module_path = drupal_get_path('module', 'islandora_openseadragon');
   $variables['viewer_id'] = 'islandora-openseadragon';
-  $settings = array(
-    'id' => $variables['viewer_id'],
-    'prefixUrl' => file_create_url("$library_path/images/"),
-  );
-
-  module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
-  $installed_version = islandora_openseadragon_get_installed_version();
-
-  if (version_compare($installed_version, '0.9.82') <= 0) {
-    // XXX: Version numbers don't quite line-up for the change in the nav image
-    // prefix URL, so now, let the hacking begin!... Just for compatibility
-    // with older versions.
-    $types = array('zoomIn', 'zoomOut', 'home', 'fullpage', 'previous', 'next');
-    $actions = array(
-      'REST' => 'rest',
-      'GROUP' => 'grouphover',
-      'HOVER' => 'hover',
-      'DOWN' => 'pressed',
-    );
-    foreach ($types as $type) {
-      foreach ($actions as $action => $namepart) {
-        $settings['navImages'][$type][$action] = format_string('!type_!action.png', array(
-          '!type' => strtolower($type),
-          '!action' => $namepart,
-        ));
-      }
-    }
-  }
-
-  $settings = array_merge($settings, islandora_openseadragon_get_settings());
-  foreach ($settings as $key => $val) {
-    if (filter_var($val, FILTER_VALIDATE_FLOAT)) {
-      $settings[$key] = (float) $val;
-    }
-    elseif (filter_var($val, FILTER_VALIDATE_INT)) {
-      $settings[$key] = (int) $val;
-    }
-  }
-
+  $settings = islandora_openseadragon_add_settings();
   // This is where we jam in some HOCR coordinates.
   if (isset($variables['fedora_object']) && isset($_GET['solr'])) {
     $params = $_GET['solr']['params'];
@@ -189,6 +166,52 @@ function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$var
   drupal_add_js("$library_path/openseadragon.js");
   drupal_add_js("$module_path/js/djtilesource.js");
   drupal_add_css("$module_path/css/islandora_openseadragon.theme.css");
+}
+
+function islandora_openseadragon_add_settings() {
+  // Variable fedora_object included in results, but not used.
+  $library_path = libraries_get_path('openseadragon');
+  $module_path = drupal_get_path('module', 'islandora_openseadragon');
+  $settings = array(
+    'id' => 'islandora-openseadragon',
+    'prefixUrl' => file_create_url("$library_path/images/"),
+  );
+
+  module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
+  $installed_version = islandora_openseadragon_get_installed_version();
+
+  if (version_compare($installed_version, '0.9.82') <= 0) {
+    // XXX: Version numbers don't quite line-up for the change in the nav image
+    // prefix URL, so now, let the hacking begin!... Just for compatibility
+    // with older versions.
+    $types = array('zoomIn', 'zoomOut', 'home', 'fullpage', 'previous', 'next');
+    $actions = array(
+      'REST' => 'rest',
+      'GROUP' => 'grouphover',
+      'HOVER' => 'hover',
+      'DOWN' => 'pressed',
+    );
+    foreach ($types as $type) {
+      foreach ($actions as $action => $namepart) {
+        $settings['navImages'][$type][$action] = format_string('!type_!action.png', array(
+          '!type' => strtolower($type),
+          '!action' => $namepart,
+        ));
+      }
+    }
+  }
+
+  $settings = array_merge($settings, islandora_openseadragon_get_settings());
+  foreach ($settings as $key => $val) {
+    if (filter_var($val, FILTER_VALIDATE_FLOAT)) {
+      $settings[$key] = (float) $val;
+    }
+    elseif (filter_var($val, FILTER_VALIDATE_INT)) {
+      $settings[$key] = (int) $val;
+    }
+  }
+
+  return $settings;
 }
 
 /**
