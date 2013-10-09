@@ -21,23 +21,24 @@
     };
     this.baseURL = 'http://digital.library.ucla.edu/adore-djatoka/resolver';
     this.imageID = imageID;
-    var options = {
-      width: 6415,
-      height: 8000,
-      tileSize: settings.tileSize,
-      tileOverlap: settings.tileOverlap,
-      minLevel: 1,
-      maxLevel: 5,
-    };
-
+    var options;
     var djatoka_get_success = function(data, textStatus, jqXHR) {
+      options = {
+        width: parseInt(data.width),
+        height: parseInt(data.height),
+        tileSize: settings.tileSize,
+        tileOverlap: settings.tileOverlap,
+        minLevel: 1,
+        maxLevel: parseInt(data.levels),
+      };
     };
 
+    var proxy_url = Drupal.settings.basePath + 'proxy'
+    var url = this.baseURL + '?' + jQuery.param(djatoka_get_params);
     jQuery.ajaxSetup({async: false});
-    jQuery.get(this.baseURL, djatoka_get_params, djatoka_get_success, 'json');
+    jqxhr = jQuery.get(proxy_url, {request : url}, djatoka_get_success, 'json');
     jQuery.ajaxSetup({async:true});
-
-    $.TileSource.apply( this, [ options ] );
+    $.TileSource.apply(this, [ options ]);
   };
 
   $.extend($.DjatokaTileSource.prototype, $.TileSource.prototype, {

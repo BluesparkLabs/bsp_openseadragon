@@ -12,6 +12,7 @@
             var tileSource = new OpenSeadragon.DjatokaTileSource(uri, settings.islandoraOpenSeadragon);
             config.tileSources.push(tileSource);
           });
+          new OpenSeadragon(config);
           $(this).addClass('processed');
         }
       });
