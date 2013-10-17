@@ -78,7 +78,7 @@ function islandora_openseadragon_field_formatter_view($entity_type, $entity, $fi
         $settings = islandora_openseadragon_add_settings();
         $params = array(
           'islandoraOpenSeadragon' => array(
-            'resourceUri' => $items[0]['value'],
+            'resourceUri' => $items[0]['value'] .'/datastream/JP2/view',
             'tileSize' => (int) variable_get('islandora_openseadragon_tile_size', '256'),
             'tileOverlap' => (int) variable_get('islandora_openseadragon_tile_overlap', '0'),
             'settings' => $settings),
