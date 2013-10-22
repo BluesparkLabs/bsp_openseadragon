@@ -6,7 +6,7 @@
 
       config.prefixUrl = "/sites/all/themes/numa/images/openseadragon/";
       config.navigatorPosition = 'TOP_RIGHT';
-      config.navImages = {
+      /*config.navImages = {
         zoomIn: {
           REST:   'zoomin.png',
           GROUP:  'zoomin.png',
@@ -43,7 +43,7 @@
           HOVER:  'next.png',
           DOWN:   'next.png'
         }
-      };
+      };*/
 
       var openSeadragonId = '#' + config['id'];
       $(openSeadragonId).each(function () {
