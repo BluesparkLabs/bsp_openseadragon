@@ -37,6 +37,9 @@
     var url = this.baseURL + '?' + jQuery.param(djatoka_get_params);
     jQuery.ajaxSetup({async: false});
     jqxhr = jQuery.get(proxy_url, {request : url}, djatoka_get_success, 'json');
+    jqxhr.fail(function () {
+      alert("Error getting the Djatoka resource.");
+    });
     jQuery.ajaxSetup({async:true});
     $.TileSource.apply(this, [ options ]);
   };
