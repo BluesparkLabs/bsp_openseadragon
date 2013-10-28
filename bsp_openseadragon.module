@@ -8,14 +8,14 @@
 /**
  * Implements hook_menu().
  */
-function islandora_openseadragon_menu() {
+function bsp_openseadragon_menu() {
   return array(
-    'admin/islandora/openseadragon' => array(
+    'admin/bsp/openseadragon' => array(
       'title' => 'OpenSeadragon',
       'description' => 'Configure the OpenSeadragon viewer.',
       'page callback' => 'drupal_get_form',
       'access arguments' => array('administer site configuration'),
-      'page arguments' => array('islandora_openseadragon_admin'),
+      'page arguments' => array('bsp_openseadragon_admin'),
       'file' => 'includes/admin.form.inc',
       'type' => MENU_NORMAL_ITEM,
     ),
@@ -25,28 +25,28 @@ function islandora_openseadragon_menu() {
 /**
  * Implements hook_theme().
  */
-function islandora_openseadragon_theme() {
+function bsp_openseadragon_theme() {
   return array(
-    'islandora_openseadragon_viewer' => array(
+    'bsp_openseadragon_viewer' => array(
       'variables' => array(
         'uri' => '',
       ),
-      'template' => 'theme/islandora-openseadragon',
+      'template' => 'theme/bsp-openseadragon',
     ),
   );
 }
 
 /**
- * Implements hook_islandora_viewer_info().
+ * Implements hook_bsp_viewer_info().
  */
-function islandora_openseadragon_islandora_viewer_info() {
+function bsp_openseadragon_bsp_viewer_info() {
   return array(
-    'islandora_openseadragon' => array(
+    'bsp_openseadragon' => array(
       'label' => t('OpenSeadragon'),
         // Later we'll add DZI too.
       'description' => t('OpenSeadragon viewer with djatoka as tilesource.'),
-      'configuration' => 'admin/islandora/openseadragon',
-      'callback' => 'islandora_openseadragon_callback',
+      'configuration' => 'admin/bsp/openseadragon',
+      'callback' => 'bsp_openseadragon_callback',
         // DZI has xml as mimetype? Not sure how to handle that.
       'mimetype' => array('image/jp2'),
     ),
@@ -56,7 +56,7 @@ function islandora_openseadragon_islandora_viewer_info() {
 /**
 * Implements hook_field_formatter_info().
 */
-function islandora_openseadragon_field_formatter_info() {
+function bsp_openseadragon_field_formatter_info() {
   return array(
     'textfield_openseadragon' => array(
       'label' => t('OpenSeadragon text field URI viewer'),
@@ -68,30 +68,30 @@ function islandora_openseadragon_field_formatter_info() {
 /**
 * Implements hook_field_formatter_view().
 */
-function islandora_openseadragon_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function bsp_openseadragon_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
   switch ($display['type']) {
     case 'textfield_openseadragon':
       if (!empty($items[0])) {
         $library_path = libraries_get_path('openseadragon');
-        $module_path = drupal_get_path('module', 'islandora_openseadragon');
-        $settings = islandora_openseadragon_add_settings();
+        $module_path = drupal_get_path('module', 'bsp_openseadragon');
+        $settings = bsp_openseadragon_add_settings();
         $params = array(
-          'islandoraOpenSeadragon' => array(
+          'bspOpenSeadragon' => array(
             'resourceUri' => $items[0]['value'] .'/datastream/JP2/view',
-            'tileSize' => (int) variable_get('islandora_openseadragon_tile_size', '256'),
-            'tileOverlap' => (int) variable_get('islandora_openseadragon_tile_overlap', '0'),
+            'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
+            'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
             'settings' => $settings),
         );
 
         drupal_add_js($params, 'setting');
         drupal_add_js("$library_path/openseadragon.js");
         drupal_add_js("$module_path/js/djtilesource.js");
-        drupal_add_js("$module_path/js/islandora_openseadragon.js");
-        drupal_add_css("$module_path/css/islandora_openseadragon.theme.css");
+        drupal_add_js("$module_path/js/bsp_openseadragon.js");
+        drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 
         $element[0] = array(
-          '#markup' => '<div id="islandora-openseadragon" class="islandora-openseadragon"></div>',
+          '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon"></div>',
         );
       }
 
@@ -106,33 +106,33 @@ function islandora_openseadragon_field_formatter_view($entity_type, $entity, $fi
  * @param array $params
  *   Params required by the theme. We require the keys:
  *   - jp2_url: The URL to the JP2 image.
- * @param IslandoraAbstractObject $fedora_object
+ * @param bspAbstractObject $fedora_object
  *   The object that we are viewing.
  *
  * @return string
  *   HTML repersentation of the OpenSeadragon viewer
  */
-function islandora_openseadragon_callback($params = NULL, $fedora_object = NULL) {
+function bsp_openseadragon_callback($params = NULL, $fedora_object = NULL) {
   if (isset($params['jp2_url'])) {
     $uri = $params['jp2_url'];
-    return theme('islandora_openseadragon_viewer', array('uri' => $uri, 'fedora_object' => $fedora_object));
+    return theme('bsp_openseadragon_viewer', array('uri' => $uri, 'fedora_object' => $fedora_object));
   }
 }
 
 /**
  * Implements hook_preprocess().
  */
-function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$variables) {
-  $variables['viewer_id'] = 'islandora-openseadragon';
-  $settings = islandora_openseadragon_add_settings();
+function bsp_openseadragon_preprocess_bsp_openseadragon_viewer(&$variables) {
+  $variables['viewer_id'] = 'bsp-openseadragon';
+  $settings = bsp_openseadragon_add_settings();
   // This is where we jam in some HOCR coordinates.
   if (isset($variables['fedora_object']) && isset($_GET['solr'])) {
     $params = $_GET['solr']['params'];
     $params['fq'][] = format_string('PID:"!pid"', array(
       '!pid' => $variables['fedora_object']->id,
     ));
-    module_load_include('inc', 'islandora_paged_content', 'includes/highlighting');
-    $highlighting_info = islandora_paged_content_perform_solr_highlighting_query($_GET['solr']['query'], $params);
+    module_load_include('inc', 'bsp_paged_content', 'includes/highlighting');
+    $highlighting_info = bsp_paged_content_perform_solr_highlighting_query($_GET['solr']['query'], $params);
     $highlights = array();
 
     foreach ($highlighting_info as $pid => $info) {
@@ -145,7 +145,7 @@ function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$var
             'y' => $bounding_box['top'] / $info['page']['width'],
             'width' => ($bounding_box['right'] - $bounding_box['left']) / $info['page']['width'],
             'height' => ($bounding_box['bottom'] - $bounding_box['top']) / $info['page']['width'],
-            'className' => "islandora-openseadragon-highlight",
+            'className' => "bsp-openseadragon-highlight",
           );
         }
       }
@@ -154,31 +154,31 @@ function islandora_openseadragon_preprocess_islandora_openseadragon_viewer(&$var
   }
 
   drupal_add_js(array(
-      'islandoraOpenSeadragon' => array(
+      'bspOpenSeadragon' => array(
         'pid' => isset($variables['fedora_object']) ? $variables['fedora_object']->id : NULL,
         'resourceUri' => $variables['uri'],
-        'tileSize' => (int) variable_get('islandora_openseadragon_tile_size', '256'),
-        'tileOverlap' => (int) variable_get('islandora_openseadragon_tile_overlap', '0'),
+        'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
+        'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
         'settings' => $settings,
       ),
     ), 'setting');
-  drupal_add_js("$module_path/js/islandora_openseadragon.js");
+  drupal_add_js("$module_path/js/bsp_openseadragon.js");
   drupal_add_js("$library_path/openseadragon.js");
   drupal_add_js("$module_path/js/djtilesource.js");
-  drupal_add_css("$module_path/css/islandora_openseadragon.theme.css");
+  drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 }
 
-function islandora_openseadragon_add_settings() {
+function bsp_openseadragon_add_settings() {
   // Variable fedora_object included in results, but not used.
   $library_path = libraries_get_path('openseadragon');
-  $module_path = drupal_get_path('module', 'islandora_openseadragon');
+  $module_path = drupal_get_path('module', 'bsp_openseadragon');
   $settings = array(
-    'id' => 'islandora-openseadragon',
+    'id' => 'bsp-openseadragon',
     'prefixUrl' => file_create_url("$library_path/images/"),
   );
 
-  module_load_include('inc', 'islandora_openseadragon', 'includes/utilities');
-  $installed_version = islandora_openseadragon_get_installed_version();
+  module_load_include('inc', 'bsp_openseadragon', 'includes/utilities');
+  $installed_version = bsp_openseadragon_get_installed_version();
 
   if (version_compare($installed_version, '0.9.82') <= 0) {
     // XXX: Version numbers don't quite line-up for the change in the nav image
@@ -201,7 +201,7 @@ function islandora_openseadragon_add_settings() {
     }
   }
 
-  $settings = array_merge($settings, islandora_openseadragon_get_settings());
+  $settings = array_merge($settings, bsp_openseadragon_get_settings());
   foreach ($settings as $key => $val) {
     if (filter_var($val, FILTER_VALIDATE_FLOAT)) {
       $settings[$key] = (float) $val;
@@ -220,8 +220,8 @@ function islandora_openseadragon_add_settings() {
  * @return array
  *   Configuration options for OpenSeadragon.
  */
-function islandora_openseadragon_get_settings() {
-  return variable_get('islandora_openseadragon_settings', array(
+function bsp_openseadragon_get_settings() {
+  return variable_get('bsp_openseadragon_settings', array(
       'debugMode' => FALSE,
       'animationTime' => '1.5',
       'blendTime' => '0.1',
@@ -251,7 +251,7 @@ function islandora_openseadragon_get_settings() {
 /**
  * Implements hook_process_theme().
  */
-function islandora_openseadragon_preprocess_islandora_object_print(array &$variables) {
+function bsp_openseadragon_preprocess_bsp_object_print(array &$variables) {
   $object = $variables['object'];
   if (isset($_GET['clip'])) {
     $dimensions = array();

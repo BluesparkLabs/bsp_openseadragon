@@ -1,4 +1,4 @@
-name = Islandora OpenSeadragon
+name = BSP OpenSeadragon
 description = "OpenSeadragon viewer with option to serve images using djatoka"
 dependencies[] = libraries
 dependencies[] = proxy

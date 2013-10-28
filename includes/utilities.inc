@@ -11,7 +11,7 @@
 /**
  * Get the installed version.
  */
-function islandora_openseadragon_get_installed_version() {
+function bsp_openseadragon_get_installed_version() {
   $version = &drupal_static(__FUNCTION__, NULL);
 
   if ($version === NULL) {
