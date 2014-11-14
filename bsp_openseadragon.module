@@ -19,6 +19,11 @@ function bsp_openseadragon_menu() {
       'file' => 'includes/admin.form.inc',
       'type' => MENU_NORMAL_ITEM,
     ),
+    'openseadragon/viewer' => array(
+      'type' => MENU_CALLBACK,
+      'access callback' => TRUE,
+      'page callback' => 'bsp_openseadragon_viewer_page',
+    ),
   );
 }
 
@@ -272,4 +277,40 @@ function bsp_openseadragon_preprocess_bsp_object_print(array &$variables) {
       '#suffix' => '</div>',
     );
   }
+}
+
+/**
+ * Page callback to display a seadragon viewer.
+ *
+ * @param null $id
+ * @return array|string
+ */
+function bsp_openseadragon_viewer_page($id = NULL) {
+  if (!$id) {
+    return '';
+  }
+
+  $library_path = libraries_get_path('openseadragon');
+  $module_path = drupal_get_path('module', 'bsp_openseadragon');
+  $settings = bsp_openseadragon_add_settings();
+
+  $params = array(
+    'bspOpenSeadragon' => array(
+      'resourceUri' => 'http://digital.library.ucla.edu/islandora/object/' .$id .'/datastream/JP2/view',
+      'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
+      'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
+      'settings' => $settings),
+  );
+
+  drupal_add_js($params, 'setting');
+  drupal_add_js("$library_path/openseadragon.js");
+  drupal_add_js("$module_path/js/djtilesource.js");
+  drupal_add_js("$module_path/js/bsp_openseadragon.js");
+  drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
+
+  $output = array(
+    '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon"></div>',
+  );
+
+  return $output;
 }
