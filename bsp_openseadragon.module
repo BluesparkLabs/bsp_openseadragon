@@ -175,7 +175,7 @@ function bsp_openseadragon_add_settings() {
   $settings = array(
     'id' => 'bsp-openseadragon',
     'prefixUrl' => file_create_url("$module_path/images/"),
-    'navigatorPosition' => 'TOP_RIGHT';
+    'navigatorPosition' => 'TOP_RIGHT',
   );
 
   module_load_include('inc', 'bsp_openseadragon', 'includes/utilities');
