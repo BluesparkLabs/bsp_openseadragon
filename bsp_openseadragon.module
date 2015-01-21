@@ -10,7 +10,7 @@
  */
 function bsp_openseadragon_menu() {
   return array(
-    'admin/bsp/openseadragon' => array(
+    'admin/config/media/openseadragon' => array(
       'title' => 'OpenSeadragon',
       'description' => 'Configure the OpenSeadragon viewer.',
       'page callback' => 'drupal_get_form',
@@ -50,7 +50,7 @@ function bsp_openseadragon_bsp_viewer_info() {
       'label' => t('OpenSeadragon'),
         // Later we'll add DZI too.
       'description' => t('OpenSeadragon viewer with djatoka as tilesource.'),
-      'configuration' => 'admin/bsp/openseadragon',
+      'configuration' => 'admin/config/media/openseadragon',
       'callback' => 'bsp_openseadragon_callback',
         // DZI has xml as mimetype? Not sure how to handle that.
       'mimetype' => array('image/jp2'),
