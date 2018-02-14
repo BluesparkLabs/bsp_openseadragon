@@ -296,7 +296,7 @@ function bsp_openseadragon_viewer_page($id = NULL) {
 
   $params = array(
     'bspOpenSeadragon' => array(
-      'resourceUri' => 'http://digital.library.ucla.edu/islandora/object/' .$id .'/datastream/JP2/view',
+      'resourceUri' => 'https://dl.library.ucla.edu/islandora/object/' .$id .'/datastream/JP2/view',
       'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
       'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
       'settings' => $settings),

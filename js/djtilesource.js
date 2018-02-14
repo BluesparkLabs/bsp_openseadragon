@@ -19,7 +19,7 @@
       'rft_id': imageID,
       'svc_id': 'info:lanl-repo/svc/getMetadata'
     };
-    this.baseURL = 'http://digital.library.ucla.edu/adore-djatoka/resolver';
+    this.baseURL = 'https://dl.library.ucla.edu/adore-djatoka/resolver';
     this.imageID = imageID;
     var options;
     var djatoka_get_success = function(data, textStatus, jqXHR) {
