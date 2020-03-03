@@ -48,11 +48,9 @@ function bsp_openseadragon_bsp_viewer_info() {
   return array(
     'bsp_openseadragon' => array(
       'label' => t('OpenSeadragon'),
-        // Later we'll add DZI too.
-      'description' => t('OpenSeadragon viewer with djatoka as tilesource.'),
+      'description' => t('OpenSeadragon viewer with an IIIF-compatible as Tile Source.'),
       'configuration' => 'admin/config/media/openseadragon',
       'callback' => 'bsp_openseadragon_callback',
-        // DZI has xml as mimetype? Not sure how to handle that.
       'mimetype' => array('image/jp2'),
     ),
   );
@@ -83,7 +81,7 @@ function bsp_openseadragon_field_formatter_view($entity_type, $entity, $field, $
         $settings = bsp_openseadragon_add_settings();
         $params = array(
           'bspOpenSeadragon' => array(
-            'resourceUri' => $items[0]['value'] .'/datastream/JP2/view',
+            'resourceUri' => $items[0]['value'],
             'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
             'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
             'settings' => $settings),
@@ -91,7 +89,6 @@ function bsp_openseadragon_field_formatter_view($entity_type, $entity, $field, $
 
         drupal_add_js($params, 'setting');
         drupal_add_js("$library_path/openseadragon.js");
-        drupal_add_js("$module_path/js/djtilesource.js");
         drupal_add_js("$module_path/js/bsp_openseadragon.js");
         drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 
@@ -169,7 +166,6 @@ function bsp_openseadragon_preprocess_bsp_openseadragon_viewer(&$variables) {
     ), 'setting');
   drupal_add_js("$module_path/js/bsp_openseadragon.js");
   drupal_add_js("$library_path/openseadragon.js");
-  drupal_add_js("$module_path/js/djtilesource.js");
   drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 }
 
@@ -296,7 +292,7 @@ function bsp_openseadragon_viewer_page($id = NULL) {
 
   $params = array(
     'bspOpenSeadragon' => array(
-      'resourceUri' => 'https://dl.library.ucla.edu/islandora/object/' .$id .'/datastream/JP2/view',
+      'resourceUri' => 'http://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/' . $id . '~JP2~~default',
       'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
       'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
       'settings' => $settings),
@@ -304,7 +300,6 @@ function bsp_openseadragon_viewer_page($id = NULL) {
 
   drupal_add_js($params, 'setting');
   drupal_add_js("$library_path/openseadragon.js");
-  drupal_add_js("$module_path/js/djtilesource.js");
   drupal_add_js("$module_path/js/bsp_openseadragon.js");
   drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 
