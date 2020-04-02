@@ -292,7 +292,7 @@ function bsp_openseadragon_viewer_page($id = NULL) {
 
   $params = array(
     'bspOpenSeadragon' => array(
-      'resourceUri' => 'http://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/' . $id . '~JP2~~default',
+      'resourceUri' => 'https://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/' . $id . '~JP2~~default',
       'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
       'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
       'settings' => $settings),
