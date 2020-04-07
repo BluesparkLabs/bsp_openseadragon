@@ -81,7 +81,7 @@ function bsp_openseadragon_field_formatter_view($entity_type, $entity, $field, $
         $settings = bsp_openseadragon_add_settings();
         $params = array(
           'bspOpenSeadragon' => array(
-            'resourceUri' => $items[0]['value'],
+            'resourceUri' => _get_iiif_uri($items[0]['value']),
             'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
             'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
             'settings' => $settings),
@@ -93,7 +93,7 @@ function bsp_openseadragon_field_formatter_view($entity_type, $entity, $field, $
         drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 
         $element[0] = array(
-          '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon"></div>',
+          '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon bsp-openseadragon--field-formatter"></div>',
         );
       }
 
@@ -158,7 +158,7 @@ function bsp_openseadragon_preprocess_bsp_openseadragon_viewer(&$variables) {
   drupal_add_js(array(
       'bspOpenSeadragon' => array(
         'pid' => isset($variables['fedora_object']) ? $variables['fedora_object']->id : NULL,
-        'resourceUri' => $variables['uri'],
+        'resourceUri' => _get_iiif_uri($variables['uri']),
         'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
         'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
         'settings' => $settings,
@@ -292,7 +292,7 @@ function bsp_openseadragon_viewer_page($id = NULL) {
 
   $params = array(
     'bspOpenSeadragon' => array(
-      'resourceUri' => 'https://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/' . $id . '~JP2~~default',
+      'resourceUri' => _get_iiif_uri($id),
       'tileSize' => (int) variable_get('bsp_openseadragon_tile_size', '256'),
       'tileOverlap' => (int) variable_get('bsp_openseadragon_tile_overlap', '0'),
       'settings' => $settings),
@@ -304,8 +304,29 @@ function bsp_openseadragon_viewer_page($id = NULL) {
   drupal_add_css("$module_path/css/bsp_openseadragon.theme.css");
 
   $output = array(
-    '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon"></div>',
+    '#markup' => '<div id="bsp-openseadragon" class="bsp-openseadragon bsp-openseadragon--viewer-page"></div>',
   );
 
   return $output;
+}
+
+/**
+ * Helper function to convert an Islandora uri into an iiif uri.
+ */
+function _get_iiif_uri($string) {
+  $islandora = preg_quote('https://dl.library.ucla.edu/islandora/object/', '/');
+  $iiif_prefix = 'https://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/';
+  $iiif_suffix = '~JP2~~default';
+  if (strpos($string, $iiif_prefix) === 0) {
+    $result = $string;
+  }
+  else if (preg_match("/^$islandora(?<pid>.*)$/", $string, $matches)) {
+    $pid = $matches['pid'];
+    $result = $iiif_prefix . $pid . $iiif_suffix;
+  }
+  else {
+    $pid = $string;
+    $result = $iiif_prefix . $pid . $iiif_suffix;
+  }
+  return $result;
 }
