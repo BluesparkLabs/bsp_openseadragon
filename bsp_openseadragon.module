@@ -315,7 +315,7 @@ function bsp_openseadragon_viewer_page($id = NULL) {
  */
 function _get_iiif_uri($string) {
   $islandora = preg_quote('https://dl.library.ucla.edu/islandora/object/', '/');
-  $iiif_prefix = 'https://p-w-islandoraweb01-rhel7.library.ucla.edu/iiif/2/';
+  $iiif_prefix = 'https://dl.library.ucla.edu/iiif/2/';
   $iiif_suffix = '~JP2~~default';
   if (strpos($string, $iiif_prefix) === 0) {
     $result = $string;
